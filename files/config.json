@@ -1,0 +1,16 @@
+{
+  "moeda": "BRL",
+  "adultos": 1,
+  "max_combinacoes_por_rota": 6,
+  "rotas": [
+    {
+      "origem": "BSB",
+      "destino": "GRU",
+      "ida_de": "2026-12-10",
+      "ida_ate": "2026-12-14",
+      "volta_de": "2026-12-20",
+      "volta_ate": "2026-12-24",
+      "preco_alvo": 600
+    }
+  ]
+}

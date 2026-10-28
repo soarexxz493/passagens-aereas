@@ -1,0 +1,36 @@
+name: Monitor de passagens
+
+on:
+  schedule:
+    - cron: "0 9,21 * * *"   # 2x por dia (horário UTC: 06h e 18h em Brasília)
+  workflow_dispatch:          # permite rodar manualmente pelo botão "Run workflow"
+
+permissions:
+  contents: write             # necessário para salvar o histórico de preços
+
+jobs:
+  checar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Checar preços
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor_passagens.py
+
+      - name: Salvar histórico
+        run: |
+          git config user.name "monitor-bot"
+          git config user.email "monitor-bot@users.noreply.github.com"
+          git add estado_precos.json
+          git diff --cached --quiet || (git commit -m "atualiza menor preço" && git push)
